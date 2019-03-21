@@ -23,8 +23,8 @@ public class pumpkinTosser : MonoBehaviour {
 	private int blocksNotDown;
 	private int blocksDown;
 	//private string(s)
-	private string textColor = "#bbbbbbff";
-	private string gameOverColor = "#ccccccff";
+	private const string textColor = "#bbbbbbff";
+	private const string gameOverColor = "#ccccccff";
 
 
 	void Start() {
@@ -82,7 +82,7 @@ public class pumpkinTosser : MonoBehaviour {
 			}
 			Rect playAgainPanel = new Rect(Screen.width / 2 - 150 / 2, Screen.height / 2 - 40 / 2, 150, 40);
 			if (GUI.Button(playAgainPanel, "Play Again?")) {
-				Application.LoadLevel(0)
+				Application.LoadLevel(0);
 			}
 		}
 		else {

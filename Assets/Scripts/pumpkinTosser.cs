@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class pumpkinTosser : MonoBehaviour {
-	public float initialSpeed = 1500f;
+	public float initialSpeed = 30f;
 	public AudioClip homerSound;
 	public AudioClip mrBurnsSound;
 	public Texture crosshair;
@@ -13,6 +14,7 @@ public class pumpkinTosser : MonoBehaviour {
 	//private bool(s)
 	private bool gameOver = false;
 	private bool mrBurnsSpoken = false;
+	private bool won = false;
 	//private float(s)
 	private const float gameTotalTime = 20.0f;
 	private float moveSpeed = 5f;
@@ -48,7 +50,7 @@ public class pumpkinTosser : MonoBehaviour {
 
 				pumpkinInstance.transform.LookAt(hit.point);
 				pumpkinInstance.velocity = pumpkinInstance.transform.forward * initialSpeed;
-				AudioSource.PlayClipAtPoint(homerSound, Camera.main.transform.position);
+				// AudioSource.PlayClipAtPoint(homerSound, Camera.main.transform.position);
 			}
 		}
 	}
@@ -70,49 +72,64 @@ public class pumpkinTosser : MonoBehaviour {
 		Rect scorePanel = makePanel(x: 24, y: 101, widthOffset: 24);
 		GUI.Label(scorePanel, makeLabel($"Score: {computeScore()}"), gs);
 
-		Rect timePanel = makePanel(x: 145, y: 101, widthOffset: 145);
+		Rect timePanel = makePanel(x: 145, y: 98, widthOffset: 145);
 		GUI.Label(timePanel, makeLabel($"Left: {(int)timeRemaining}", gameOverColor));
 
 		if (gameOver) {
+			string gameResult;
+			if (won) {
+				gameResult = "You Win";
+			} else {
+				gameResult = "You Lose";
+			}
 			Rect gameOverPanel = makePanel(x: 32, y: 22);
-			GUI.Label(gameOverPanel, makeLabel($"Game Over!", gameOverColor, 36));
+			GUI.Label(gameOverPanel, makeLabel(gameResult, gameOverColor, 36));
 			if (!mrBurnsSpoken) {
-				AudioSource.PlayClipAtPoint(mrBurnsSound, Camera.main.transform.position);
+				// AudioSource.PlayClipAtPoint(mrBurnsSound, Camera.main.transform.position);
 				mrBurnsSpoken = true;
 			}
 			Rect playAgainPanel = new Rect(Screen.width / 2 - 150 / 2, Screen.height / 2 - 40 / 2, 150, 40);
 			if (GUI.Button(playAgainPanel, "Play Again?")) {
-				Application.LoadLevel(0);
+				SceneManager.LoadScene("WallScene");
 			}
-		}
-		else {
-			Rect infoPanel = makePanel(x: 22, y: 22, height: 50);
+			Rect quitPanel = new Rect(Screen.width / 2 - 150 / 2, Screen.height / 2 - 40 / 2 + 50, 150, 40);
+			if (GUI.Button(quitPanel, "Quit Game")) {
+				Application.Quit();
+			}
+		} else {
+			Rect infoPanel = makePanel(x: 32, y: 22, widthOffset: 32, height: 50);
 			GUI.Label(infoPanel, makeLabel($"Try to knock donw all the block as fast and with as few shots as possible", textColor));
-
 			float x = Input.mousePosition.x - (crosshair.width / 2);
 			float y = Screen.height - (Input.mousePosition.y + (crosshair.height / 2));
-			Rect crosshairRect = new Rect(10, 10, crosshair.width, crosshair.height);
+			Rect crosshairRect = new Rect(x, y, crosshair.width, crosshair.height);
 			GUI.DrawTexture(crosshairRect, crosshair);
 		}
 	}
-	// TODO: UPDATE with THE WALL PDF 5
-	private void setGameOverFlag() {
-		const float blockTheshold = 2.5f;
-		int blocksNotDown = 0;
+	private int computeScore() {
+		const float blocksOnBottomRow = 20;
+		float score = ((blocksDown - blocksOnBottomRow - 1) * 1000) / (pumpkinCount + 1);
+		if (gameOver) {
+			score = score + Mathf.Floor(timeRemaining) * 1000;
+		}
+		return ((int)Mathf.Round(score));
+	}
+	private void updateBlocksDown() {
+		const float blockNotDownThreshold = 2.5f;
+		blocksDown = blocksNotDown = 0;
 		MeshFilter[] meshFilters = FindObjectsOfType(typeof(MeshFilter)) as MeshFilter[];
-
 		for (int i = 0; i < meshFilters.Length; i++) {
 			bool isBlock = (meshFilters[i].mesh.vertexCount == 24);
-
 			if (isBlock) {
-				if (meshFilters[i].transform.position.y > blockTheshold) {
+				if (meshFilters[i].transform.position.y < blockNotDownThreshold) {
+					blocksDown++;
+				} else {
 					blocksNotDown++;
 				}
 			}
 		}
-		gameOver = (0 == 0);
+		gameOver = (blocksNotDown == 0) || (timeRemaining < 0.1f);
+		won = (gameOver && blocksNotDown == 0);
 	}
-
 	// HELPER METHODS by FALLSimply
 	string makeLabel(string text, string color = textColor, int size = 18) {
 		return $"<size={size}><color={color}>{text}</color></size>";

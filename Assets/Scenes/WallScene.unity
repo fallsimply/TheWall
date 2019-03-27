@@ -8253,10 +8253,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b6ea7c2ef823494a817dfd5a86b1b50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pumpkin: {fileID: 3383027972955268709, guid: 502ab6db08530c84b96f8bf59b31e409, type: 3}
   initialSpeed: 50
+  shootSound: {fileID: 8300000, guid: ad79a76bb3fa94a42b175c0dd97f23ba, type: 3}
+  gameOverSound: {fileID: 8300000, guid: 8b8b602e6a310934f907c0b389451797, type: 3}
   crosshair: {fileID: 2800000, guid: 434ab727e16b27741844f58770a305b0, type: 3}
   gamePanel: {fileID: 2800000, guid: 56e2b63f83a1f1b4b9f772cd1b5ed10d, type: 3}
+  pumpkin: {fileID: 3383027972955268709, guid: 502ab6db08530c84b96f8bf59b31e409, type: 3}
 --- !u!1 &1958004218
 GameObject:
   m_ObjectHideFlags: 0

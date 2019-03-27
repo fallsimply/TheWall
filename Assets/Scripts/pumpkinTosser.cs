@@ -5,15 +5,15 @@ using UnityEngine.SceneManagement;
 
 public class pumpkinTosser : MonoBehaviour {
 	public float initialSpeed = 30f;
-	public AudioClip homerSound;
-	public AudioClip mrBurnsSound;
+	public AudioClip shootSound;
+	public AudioClip gameOverSound;
 	public Texture crosshair;
 	public Texture gamePanel;
 	public Rigidbody pumpkin;
 
 	//private bool(s)
 	private bool gameOver = false;
-	private bool mrBurnsSpoken = false;
+	private bool gameOverSpoken = false;
 	private bool won = false;
 	//private float(s)
 	private const float gameTotalTime = 20.0f;
@@ -50,7 +50,7 @@ public class pumpkinTosser : MonoBehaviour {
 
 				pumpkinInstance.transform.LookAt(hit.point);
 				pumpkinInstance.velocity = pumpkinInstance.transform.forward * initialSpeed;
-				// AudioSource.PlayClipAtPoint(homerSound, Camera.main.transform.position);
+				// AudioSource.PlayClipAtPoint(shootSound, Camera.main.transform.position);
 			}
 		}
 	}
@@ -84,9 +84,9 @@ public class pumpkinTosser : MonoBehaviour {
 			}
 			Rect gameOverPanel = makePanel(x: 32, y: 22);
 			GUI.Label(gameOverPanel, makeLabel(gameResult, gameOverColor, 36));
-			if (!mrBurnsSpoken) {
-				// AudioSource.PlayClipAtPoint(mrBurnsSound, Camera.main.transform.position);
-				mrBurnsSpoken = true;
+			if (!gameOverSpoken) {
+				// AudioSource.PlayClipAtPoint(gameOverSound, Camera.main.transform.position);
+				gameOverSpoken = true;
 			}
 			Rect playAgainPanel = new Rect(Screen.width / 2 - 150 / 2, Screen.height / 2 - 40 / 2, 150, 40);
 			if (GUI.Button(playAgainPanel, "Play Again?")) {
